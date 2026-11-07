@@ -48,7 +48,8 @@ ol{margin:.2rem 0 .8rem 1.2rem;padding:0;color:var(--mut);font-size:.92rem}
     <h2 id="i" data-de="Als App installieren" data-en="Install as an app">Als App installieren</h2>
     <div class="tabs" role="tablist"><button class="tab" role="tab" data-p="mac">Mac</button><button class="tab" role="tab" data-p="windows">Windows</button><button class="tab" role="tab" data-p="ios">iPhone/iPad</button><button class="tab" role="tab" data-p="android">Android</button></div>
     <ol id="steps"></ol>
-    <button class="btn" id="install" hidden data-de="Jetzt installieren" data-en="Install now">Jetzt installieren</button>
+    <button class="btn" id="install" data-de="Jetzt installieren" data-en="Install now">Jetzt installieren</button>
+    <p id="installHint" class="muted" role="status" hidden></p>
   </section>
   <p class="fine" data-de="Registrierte Nutzer haben nach der Anmeldung alle Funktionen. Ohne Konto steht nur diese eine App bereit — für mehr bitte zuerst registrieren. Der Dienst läuft, solange der Host-Rechner online ist." data-en="Registered users get every feature after signing in. Without an account only this one app is available — register first for more. The service runs while the host computer is online.">Registrierte Nutzer haben nach der Anmeldung alle Funktionen. Ohne Konto steht nur diese eine App bereit — für mehr bitte zuerst registrieren. Der Dienst läuft, solange der Host-Rechner online ist.</p>
 </main>
@@ -74,8 +75,17 @@ function text(){document.documentElement.lang=L;document.querySelectorAll('[data
 function steps(){const s=STEPS[plat][L];$('#steps').innerHTML=s.map(x=>'<li>'+x+'</li>').join('');document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.p===plat)))}
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{plat=t.dataset.p;steps()});
 $('#lang').onclick=()=>{L=L==='de'?'en':'de';try{localStorage.setItem('lang',L)}catch{}text()};
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;$('#install').hidden=false});
-$('#install').onclick=async()=>{if(!ev)return;ev.prompt();await ev.userChoice.catch(()=>{});ev=null;$('#install').hidden=true};
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e});
+window.addEventListener('appinstalled',()=>{ev=null;const h=$('#installHint');h.hidden=false;h.textContent=L==='de'?'Installiert. Du findest die App jetzt auf deinem Gerät.':'Installed. You can now find the app on your device.'});
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+if(standalone)$('#install').hidden=true;
+$('#install').onclick=async()=>{
+  const h=$('#installHint');h.hidden=false;
+  if(ev){ev.prompt();await ev.userChoice.catch(()=>{});ev=null;return}
+  // No install prompt from this browser (Safari, Firefox, already installed …): show the steps for this device.
+  h.textContent=L==='de'?(plat==='ios'?'Tippe auf das Teilen-Symbol und dann auf „Zum Home-Bildschirm“.':'Dieser Browser bietet keine Direkt-Installation an: nutze Chrome oder Edge, oder die Schritte unten.'):(plat==='ios'?'Tap the Share icon, then “Add to Home Screen”.':'This browser has no one-click install: use Chrome or Edge, or the steps below.');
+  document.querySelector('#steps').scrollIntoView({behavior:'smooth',block:'center'});
+};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 function wire(){
   const target=url(APP.path);
