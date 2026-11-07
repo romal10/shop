@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shop</title>
+<meta name="description" content="Der Shop: stöbern, anfragen, bestellen">
+<meta name="theme-color" content="#16a34a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="referrer" content="no-referrer">
+<style>
+:root{--c:#16a34a;--bg:#0b1a10;--fg:#f4f6fb;--mut:#9aa6bd;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.16)}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--fg);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--c) 40%,transparent),transparent),radial-gradient(900px 500px at 100% 0,color-mix(in srgb,var(--c) 22%,transparent),transparent),var(--bg);padding:max(16px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+main{max-width:560px;margin:0 auto;display:grid;gap:14px}
+header{display:flex;align-items:center;gap:12px;padding:8px 2px}
+header img{width:52px;height:52px;border-radius:14px}
+h1{margin:0;font-size:1.5rem}h2{margin:0 0 6px;font-size:1.05rem}
+.muted{color:var(--mut);margin:.2rem 0 .8rem;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;font:inherit;font-weight:700;color:#fff;background:var(--c);cursor:pointer;text-decoration:none;min-height:44px}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn:focus-visible,input:focus-visible,.tab:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
+input{border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--fg);border-radius:14px;padding:12px 14px;font:inherit;font-size:16px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:12px;padding:8px 4px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.tab[aria-selected=true]{background:var(--c);border-color:var(--c)}
+ol{margin:.2rem 0 .8rem 1.2rem;padding:0;color:var(--mut);font-size:.92rem}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;border-radius:999px;padding:3px 10px;border:1px solid var(--line)}
+.dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}.on .dot{background:#34d399}.off .dot{background:#f59e0b}
+.err{color:#fda4af;font-size:.85rem;margin:.5rem 0 0}.fine{color:var(--mut);font-size:.78rem;text-align:center}
+.lang{margin-left:auto;background:none;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:4px 10px;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+  <header><img src="logo.svg" alt="" width="52" height="52"><div><h1>Shop</h1><span id="status" class="chip"><span class="dot"></span><span id="statusT">…</span></span></div><button class="lang" id="lang" aria-label="Language">EN</button></header>
+  <section class="card">
+    <p style="margin:0 0 12px" data-de="Der Shop: stöbern, anfragen, bestellen" data-en="The shop: browse, enquire, order">Der Shop: stöbern, anfragen, bestellen</p>
+    <a class="btn" id="open" data-open href="#" data-de="App öffnen" data-en="Open the app">App öffnen</a>
+  </section>
+  
+  <section class="card" aria-labelledby="i">
+    <h2 id="i" data-de="Als App installieren" data-en="Install as an app">Als App installieren</h2>
+    <div class="tabs" role="tablist"><button class="tab" role="tab" data-p="mac">Mac</button><button class="tab" role="tab" data-p="windows">Windows</button><button class="tab" role="tab" data-p="ios">iPhone/iPad</button><button class="tab" role="tab" data-p="android">Android</button></div>
+    <ol id="steps"></ol>
+    <button class="btn" id="install" hidden data-de="Jetzt installieren" data-en="Install now">Jetzt installieren</button>
+  </section>
+  <p class="fine" data-de="Registrierte Nutzer haben nach der Anmeldung alle Funktionen. Ohne Konto steht nur diese eine App bereit — für mehr bitte zuerst registrieren. Der Dienst läuft, solange der Host-Rechner online ist." data-en="Registered users get every feature after signing in. Without an account only this one app is available — register first for more. The service runs while the host computer is online.">Registrierte Nutzer haben nach der Anmeldung alle Funktionen. Ohne Konto steht nur diese eine App bereit — für mehr bitte zuerst registrieren. Der Dienst läuft, solange der Host-Rechner online ist.</p>
+</main>
+<script>
+const APP={"id":"shop","name":"Shop","host":"shop","path":"/","kind":"open","handlePath":"","color":"#16a34a"};
+let L=(localStorage.getItem('lang')||((navigator.language||'de').startsWith('de')?'de':'en'));
+const $=(s)=>document.querySelector(s);
+const STEPS={
+ mac:{de:['In Chrome oder Edge: auf „Jetzt installieren" klicken.','In Safari: Teilen-Menü → „Zum Dock hinzufügen".'],en:['In Chrome or Edge: click “Install now”.','In Safari: Share menu → “Add to Dock”.']},
+ windows:{de:['In Edge oder Chrome: auf „Jetzt installieren" klicken (oder das Installieren-Symbol in der Adressleiste).','Die App erscheint im Startmenü.'],en:['In Edge or Chrome: click “Install now” (or the install icon in the address bar).','The app appears in the Start menu.']},
+ ios:{de:['In Safari öffnen (nicht in einer anderen App).','Teilen-Symbol antippen → „Zum Home-Bildschirm".','Mit „Hinzufügen" bestätigen.'],en:['Open in Safari (not inside another app).','Tap the Share icon → “Add to Home Screen”.','Confirm with “Add”.']},
+ android:{de:['In Chrome auf „Jetzt installieren" tippen.','Falls nichts erscheint: Menü ⋮ → „App installieren".'],en:['In Chrome tap “Install now”.','If nothing shows: menu ⋮ → “Install app”.']}
+};
+const ua=navigator.userAgent;
+let plat=/iPad|iPhone|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1)?'ios':/Android/.test(ua)?'android':/Windows/.test(ua)?'windows':'mac';
+let cfg={domain:'',tunnel:'',scheme:'https'},ev=null;
+function base(){
+  if(cfg.domain){return cfg.scheme+'://'+(APP.host?APP.host+'.':'')+cfg.domain}
+  return cfg.tunnel?cfg.tunnel.replace(/\/$/,''):''
+}
+function url(path){const b=base();if(!b)return '';let u=b+path;if(!cfg.domain&&cfg.tunnel&&APP.host)u+=(u.includes('?')?'&':'?')+'portal='+encodeURIComponent(APP.host);return u}
+function text(){document.documentElement.lang=L;document.querySelectorAll('[data-de]').forEach(e=>{e.textContent=e.getAttribute('data-'+L)});$('#lang').textContent=L==='de'?'EN':'DE';steps()}
+function steps(){const s=STEPS[plat][L];$('#steps').innerHTML=s.map(x=>'<li>'+x+'</li>').join('');document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.p===plat)))}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{plat=t.dataset.p;steps()});
+$('#lang').onclick=()=>{L=L==='de'?'en':'de';try{localStorage.setItem('lang',L)}catch{}text()};
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;$('#install').hidden=false});
+$('#install').onclick=async()=>{if(!ev)return;ev.prompt();await ev.userChoice.catch(()=>{});ev=null;$('#install').hidden=true};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+function wire(){
+  const target=url(APP.path);
+  document.querySelectorAll('[data-open]').forEach(a=>{if(target)a.href=target;else{a.href='#';a.onclick=e=>{e.preventDefault();alert(L==='de'?'Der Dienst ist gerade nicht erreichbar. Bitte später erneut versuchen.':'The service is not reachable right now. Please try again later.')}}});
+  const st=$('#status');
+  if(!target){st.className='chip off';$('#statusT').textContent=L==='de'?'Offline':'Offline';return}
+  const c=new AbortController();setTimeout(()=>c.abort(),6000);
+  fetch(base()+'/logo.svg',{mode:'no-cors',cache:'no-store',signal:c.signal}).then(()=>{st.className='chip on';$('#statusT').textContent='Online'}).catch(()=>{st.className='chip off';$('#statusT').textContent='Offline'});
+}
+// Rabta: turn whatever was pasted (full link, /k/short-name, short name, raw token) into a join address on the host.
+function joinTarget(v){
+  v=(v||'').trim();if(!v)return '';
+  try{const u=new URL(/^[a-z]+:\/\//i.test(v)?v:'https://'+v);
+    if(/\/k\/[a-z0-9-]+/i.test(u.pathname)||u.searchParams.get('meet')){const m=u.pathname.match(/\/k\/([a-z0-9-]+)/i);return m?url('/k/'+m[1].toLowerCase()):url('/rabta-app?meet='+encodeURIComponent(u.searchParams.get('meet')))}
+  }catch{}
+  if(/^[a-f0-9]{16,64}$/i.test(v))return url('/rabta-app?meet='+v);
+  const s=v.toLowerCase().replace(/[^a-z0-9-]/g,'');return s.length>=3?url('/k/'+s):''
+}
+const jf=$('#joinForm');if(jf)jf.onsubmit=e=>{e.preventDefault();const t=joinTarget($('#joinIn').value);const err=$('#joinErr');if(!t){err.hidden=false;err.textContent=L==='de'?'Bitte einen gültigen Link oder Code eingeben.':'Please enter a valid link or code.';return}err.hidden=true;location.href=t};
+const hf=$('#handleForm');if(hf)hf.onsubmit=e=>{e.preventDefault();const h=$('#handleIn').value.trim().replace(/^@/,'').replace(/[^A-Za-z0-9_.-]/g,'');if(h&&url(APP.handlePath+h))location.href=url(APP.handlePath+h)};
+text();
+fetch('config.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(c=>{cfg={...cfg,...c};wire()});
+</script>
+</body>
+</html>

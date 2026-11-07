@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- CV Studio Pro — official logo mark: C + CV document + V checkmark with pixel dissolve -->
+  <defs>
+    <linearGradient id="cvspC" x1="14" y1="18" x2="96" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1b2a63"/>
+      <stop offset="0.55" stop-color="#1e3fa4"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="cvspV" x1="78" y1="106" x2="120" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1d4ed8"/>
+      <stop offset="0.55" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+
+  <!-- C — bold ring, opening to the right -->
+  <path d="M 78.8 90.1 A 36 36 0 1 1 78.8 41.9"
+        stroke="url(#cvspC)" stroke-width="22" stroke-linecap="round" fill="none"/>
+
+  <!-- CV document tucked into the C -->
+  <g transform="rotate(-4 75 68)">
+    <rect x="57.2" y="43.6" width="38" height="52" rx="5" fill="#0f172a" opacity="0.18"/>
+    <rect x="56" y="42" width="38" height="52" rx="5" fill="#ffffff"/>
+    <circle cx="66" cy="55" r="4.8" fill="#2f6fed"/>
+    <path d="M 58 68.5 Q 66 60 74 68.5 L 74 70 Q 66 66.5 58 70 Z" fill="#2f6fed"/>
+    <circle cx="61.5" cy="76.5" r="1.6" fill="#2c3e87"/>
+    <rect x="65.5" y="75" width="17" height="3" rx="1.5" fill="#44539e"/>
+    <circle cx="61.5" cy="83.5" r="1.6" fill="#7787c9"/>
+    <rect x="65.5" y="82" width="17" height="3" rx="1.5" fill="#8c9bd6"/>
+    <circle cx="61.5" cy="90.5" r="1.6" fill="#9fadde"/>
+    <rect x="65.5" y="89" width="13" height="3" rx="1.5" fill="#aab6e3"/>
+  </g>
+
+  <!-- V — checkmark swoosh -->
+  <path d="M 86 70 L 95 99 L 116 16"
+        stroke="url(#cvspV)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- pixel dissolve -->
+  <rect x="110" y="1" width="6.5" height="6.5" rx="1" fill="#3b82f6"/>
+  <rect x="119" y="8" width="5" height="5" rx="1" fill="#60a5fa"/>
+  <rect x="104" y="7" width="4" height="4" rx="0.8" fill="#60a5fa"/>
+  <rect x="122" y="0" width="3.6" height="3.6" rx="0.8" fill="#93c5fd"/>
+  <rect x="113" y="20" width="3.2" height="3.2" rx="0.8" fill="#93c5fd"/>
+</svg>
