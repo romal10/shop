@@ -139,6 +139,8 @@ async function doInstall(){
 ['#install','#install2','#install3'].forEach(s=>{const b=$(s);if(b){b.onclick=doInstall;if(standalone)b.hidden=true}});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 function wire(){
+  // Invitation / email-verification links always point at THIS constant page; the current (changing) address is only known from config.json.
+  try{const q=new URLSearchParams(location.search);const k=q.get('invite')?'invite':q.get('verify')?'verify':q.get('approve')?'approve':'';if(k&&APP.path==='/rabta-app'){const to=url('/rabta-app?'+k+'='+encodeURIComponent(q.get(k)));if(to){location.replace(to);return}}}catch{}
   const target=url(APP.path);
   document.querySelectorAll('[data-open]').forEach(a=>{if(target)a.href=target;else{a.href='#';a.onclick=e=>{e.preventDefault();alert(L==='de'?'Der Dienst ist gerade nicht erreichbar. Bitte später erneut versuchen.':'The service is not reachable right now. Please try again later.')}}});
   document.querySelectorAll('[data-path]').forEach(a=>{const u=url(a.dataset.path);if(u)a.href=u});
